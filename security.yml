@@ -1,0 +1,46 @@
+---
+ - hosts: localhost
+   connection: local
+   vars:
+        aws_access_key_id:  AKIAJ3EYEWNEQATMA6LQ
+        aws_secret_key_id: zyzC/f8aALYnx6pF0OEz9O0KKIkkpzgIxX9AsjH9 
+   tasks:
+        - name: CREATE A VPC
+          ec2_vpc_net:
+                name: adheipsinghsadhrao
+                cidr_block: 172.22.0.0/16
+                region: ap-south-1
+                aws_access_key: "{{ aws_access_key_id }}"
+                aws_secret_key: "{{ aws_secret_key_id }}"
+                tags:
+                  module: chordoannchal
+                  this: works
+          register: vpc_net
+          ignore_errors: yes
+        
+        - debug:
+                var: vpc_net 
+
+
+        - name: CREATE A SECURITY GROUP
+          ec2_group:
+                name: adheipsinghdasecurity
+                description: life is a struggle
+                region: ap-south-1
+                vpc_id: vpc-ec843784 
+                aws_secret_key: "{{ aws_secret_key_id }}"
+                aws_access_key: "{{ aws_access_key_id }}"
+                rules:
+                - proto: tcp
+                  from_port: 22
+                  to_port: 22
+                  cidr_ip: 172.22.0.0/16
+          register: final_output
+          ignore_erros: yes
+
+        - debug:
+                var:  final_output             
+
+        - debug: 
+                msg: "VPC AND SECURITY GROUP HAVE BEEN CONFIGURED AND SSH RULE HAS BEEN ALLOWED FOR THE SUBNET 172.22.0.0/16"
+          when: final_output.failed == false 
