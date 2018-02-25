@@ -1,0 +1,32 @@
+---
+ - name: CREATE A BITBUCKET FOR UPLOADING THE DATA
+   aws_s3:
+        bucket: "{{ s3_bucket_name }}"
+        region: "{{ aws_region }}"
+        mode: create
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+   register: s3_bitbucket_url
+
+ - name: DISPLAY S3 BITBUCKET URL
+   debug: 
+        var: s3_url
+
+
+ - name: PUT THE INDEX.HTML ON BITBUCKET
+   aws_s3:
+        bucket: "{{ s3_bucket_name }}"
+        object: html/index.html
+        src: /root/images/index.html
+        mode: put
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+   register: output_bucket
+   ignore_errors: yes
+
+ - debug:
+        var: output_bucket
+
+ - debug:
+        msg: " BITBUCKET HAS BEEN CREATED ON S3 AND FILES HAVE BEEN UPLOADED , TASK HAS BEEN COMPLETED "
+   when: output_bucket.failed == false

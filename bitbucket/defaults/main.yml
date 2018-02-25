@@ -1,0 +1,7 @@
+---
+aws_access_key: AKIAJ3EYEWNEQATMA6LQ
+aws_secret_key: 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
+s3_bucket_name: adheipsinghtest
+aws_region:  ap-south-1
+domain_name: adheipsinghtest.s3.amazonaws.com
+cloudfront_id: S3-adheipsinghtest
