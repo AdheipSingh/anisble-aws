@@ -1,0 +1,62 @@
+---
+ - hosts: localhost
+   connection: local
+   vars:
+        aws_access_key_id: 
+        aws_secret_key_id: 
+        s3_bucket_name: 
+        aws_region: ap-south-1
+   tasks:
+        - name: CREATE A BITBUCKET FOR UPLOADING THE DATA
+          aws_s3:
+                bucket: "{{ s3_bucket_name }}"
+                region: "{{ aws_region }}"
+                mode: create
+                aws_access_key: "{{ aws_access_key_id }}"
+                aws_secret_key: "{{ aws_secret_key_id }}"
+          register: s3_bitbucket_url
+
+        - name: DISPLAY S3 BITBUCKET URL
+          debug:
+                 var: s3_bitbucket_url
+
+
+        - name: PUT THE HELLO.JS ON BITBUCKET
+          aws_s3:
+               bucket: "{{ s3_bucket_name }}"
+               object: nodejs/hello.js
+               src: /root/images/hello.js
+               mode: put
+               aws_access_key: "{{ aws_access_key_id }}"
+               aws_secret_key: "{{ aws_secret_key_id }}"
+
+
+        - name: PUT THE HELLO.JS ON BITBUCKET
+          aws_s3:
+               bucket: "{{ s3_bucket_name }}"
+               object: nodejs/node-modules.zip
+               src: /root/images/node_modules.zip
+               mode: put
+               aws_access_key: "{{ aws_access_key_id }}"
+               aws_secret_key: "{{ aws_secret_key_id }}"
+
+
+
+
+
+
+
+
+        - name: CREATE A NODE JS LAMBDA FUNCTION
+          lambda:
+                name: adheipsingh                
+                state: present
+                s3_bucket:  "{{ s3_bucket_name }}"
+                s3_key: images/hello.zip 
+                runtime: nodejs4.3
+                region: "{{ aws_region }}"
+                role: 'arn:aws:iam::642956775490:role/lama_basic_execution'
+                handler: 'index.handler'
+                aws_access_key: "{{ aws_access_key_id }}"
+                aws_secret_key: "{{ aws_secret_key_id }}"
+
